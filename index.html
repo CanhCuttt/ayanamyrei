@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ayanami rei</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { height: 100vh; background: #000; overflow: hidden; font-family: 'Arial', sans-serif; }
+    .container { position: relative; width: 100%; height: 100%; }
+    .text, .❤️, .🐧, .number {
+      position: absolute; pointer-events: none; opacity: 0; z-index: 5;
+      filter: blur(1px);
+      transition: opacity 1.2s ease-out, transform 5s linear, filter 1.2s ease-out;
+    }
+    .text {
+      color: #ff69b4; font-size: 1.1rem; font-weight: bold; white-space: nowrap;
+      text-shadow: 0 0 6px #ff69b4, 0 0 12px #ff1493, 0 0 18px #ff1493;
+    }
+    .❤️ { color: #87CEEB; font-size: 1.6rem; text-shadow: 0 0 10px #87CEEB, 0 0 20px #87CEEB, 0 0 30px #87CEEB; }
+    .🐧 { font-size: 1.8rem; color: #87CEEB; text-shadow: 0 0 10px #87CEEB, 0 0 20px #87CEEB, 0 0 30px #87CEEB; }
+    .number { color: #87CEEB; font-size: 1.4rem; font-weight: bold; text-shadow: 0 0 8px #87CEEB, 0 0 16px #87CEEB; }
+    .title {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      color: #ff69b4; font-size: 3.2rem; font-weight: bold; text-align: center;
+      text-shadow: 0 0 35px #ff1493; z-index: 10;
+      animation: pulse 2.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+    }
+    .mist-in { opacity: 1 !important; filter: blur(0px) !important; }
+    .mist-out { opacity: 0 !important; filter: blur(3px) !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title" id="greeting-title">NguNgon</div>
+  </div>
+
+  <script>
+   
+    const greetings = {
+      morning: [
+        "sangroi.",
+        "daychx?",
+        "0110111001100111110001101011000011100001101110111001110101101001",
+        "good",
+        "morning",
+      ],
+      lunch: [
+        "cơmđượcemănchưa?",
+        "moimoi",
+        "doi",
+        "ngonmieng",
+        "0111100111000011111010100110101",
+        "🍚"
+      ],
+      afternoon: [
+        "afternoon",
+        "chieu",
+        "good",
+        "🐧",
+        "011000111100001110111101100001"
+      ],
+      night: [
+        "ngungon",
+        "modep",
+        "good",
+        "night",
+        "011001010110110100111111",
+        "1concuu",
+        "2concuu",
+        "3concuu",
+        "🐧",
+        "🐋"
+      ]
+    };
+
+
+    function getCurrentGreeting() {
+      const hour = new Date().getHours();
+      if (hour >= 5 && hour < 11) return { type: 'morning', messages: greetings.morning };
+      if (hour >= 11 && hour < 14) return { type: 'lunch', messages: greetings.lunch };
+      if (hour >= 14 && hour < 18) return { type: 'afternoon', messages: greetings.afternoon };
+      return { type: 'night', messages: greetings.night };
+    }
+
+  
+    const titleEl = document.getElementById('greeting-title');
+    const current = getCurrentGreeting();
+    const titleText = current.type === 'morning' ? 'sáng' :
+                     current.type === 'lunch' ? 'trưa' :
+                     current.type === 'afternoon' ? 'chiều' :
+                     'NgủNgon';
+    titleEl.innerHTML = titleText;
+
+   
+    const container = document.querySelector('.container');
+    let width = window.innerWidth, height = window.innerHeight;
+
+    function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+    function createFloatingElement() {
+      const current = getCurrentGreeting();
+      const type = Math.random();
+      let el;
+
+      if (type < 0.4) {
+        el = document.createElement('div');
+        el.className = 'text';
+        el.textContent = current.messages[Math.floor(Math.random() * current.messages.length)];
+      } else if (type < 0.65) {
+        el = document.createElement('div');
+        el.className = '❤️';
+        el.innerHTML = '❤️';
+      } else if (type < 0.85) {
+        el = document.createElement('div');
+        el.className = '🐧';
+        el.innerHTML = '🐧';
+      } else {
+        el = document.createElement('div');
+        el.className = 'number';
+        el.textContent = '016';
+      }
+
+      const startX = randomInRange(-100, width + 100);
+      const startY = randomInRange(-100, height + 100);
+      const angle = Math.random() * Math.PI * 2;
+      const speed = randomInRange(30, 80);
+      const duration = randomInRange(5, 8);
+      const vx = Math.cos(angle) * speed;
+      const vy = Math.sin(angle) * speed;
+      const rotateStart = randomInRange(-20, 20);
+      const rotateEnd = rotateStart + randomInRange(-30, 30);
+
+      el.style.left = `${startX}px`;
+      el.style.top = `${startY}px`;
+      el.style.transform = `rotate(${rotateStart}deg)`;
+      container.appendChild(el);
+
+      requestAnimationFrame(() => { el.classList.add('mist-in'); });
+      setTimeout(() => {
+        el.style.transition = `transform ${duration}s linear`;
+        el.style.transform = `translate(${vx}px, ${vy}px) rotate(${rotateEnd}deg)`;
+      }, 100);
+      setTimeout(() => {
+        el.classList.remove('mist-in');
+        el.classList.add('mist-out');
+        setTimeout(() => el.remove(), 1200);
+      }, duration * 1000 - 1200);
+    }
+
+  
+    setInterval(createFloatingElement, 70);
+    setTimeout(() => {
+      for (let i = 0; i < 120; i++) {
+        setTimeout(createFloatingElement, i * 30);
+      }
+    }, 100);
+
+    window.addEventListener('resize', () => {
+      width = window.innerWidth; height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
